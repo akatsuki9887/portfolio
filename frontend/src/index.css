@@ -1,16 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'react-toastify/dist/ReactToastify.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+:root {
+  --container-px: 24px;
+  --container-max: 1280px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html {
+  scroll-behavior: smooth;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F8FAFC;
+  color: #111827;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-px);
+  padding-right: var(--container-px);
+}
+
+/* Adjust scroll offset for sticky navbar */
+section {
+  scroll-margin-top: 80px; /* Matches navbar height */
+}
+
+/* Dark mode overrides */
+.dark body {
+  background: #111827;
+  color: #F8FAFC;
+}
+
+.dark .bg-white {
+  background: #1F2937;
+}
+
+.dark a {
+  color: #06B6D4;
+}
+
+.dark .bg-primary {
+  background: #1E40AF;
+}
+
+.dark .text-dark {
+  color: #F8FAFC;
+}
+
+.dark .bg-light {
+  background: #1F2937;
+}
+
+.dark .border-dark {
+  border-color: #4B5563;
+}
+
+.dark .text-dark\/70 {
+  color: #D1D5DB;
+}
+
+.dark .bg-accent {
+  background: #0891B2;
+}
+
+/* Custom button styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-lg shadow-soft hover:bg-accent hover:shadow-lg transition-smooth;
+  }
+  .dark .btn-primary {
+    @apply bg-[#1E40AF] hover:bg-[#0891B2];
+  }
+  .btn-outline {
+    @apply border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition-smooth;
+  }
+  .dark .btn-outline {
+    @apply border-[#06B6D4] text-[#06B6D4] hover:bg-[#0891B2] hover:text-white;
+  }
+  .btn-theme {
+    @apply bg-primary dark:bg-[#1E40AF] text-white p-2 rounded-full hover:bg-accent dark:hover:bg-[#0891B2] shadow-soft transition-smooth focus:outline-none focus:ring-2 focus:ring-primary/40 dark:focus:ring-[#06B6D4]/40;
+  }
+  .btn-theme-mobile {
+    @apply bg-primary dark:bg-[#1E40AF] text-white p-1.5 rounded-full hover:bg-accent dark:hover:bg-[#0891B2] shadow-sm transition-smooth text-sm w-8 h-8 flex items-center justify-center;
+  }
+}
+
+/* Subtle link underline on hover */
+a {
+  text-underline-offset: 4px;
+}
+
+/* Toastify dark mode */
+.dark .Toastify__toast {
+  background: #1F2937;
+  color: #F8FAFC;
+  border: 1px solid #4B5563;
 }

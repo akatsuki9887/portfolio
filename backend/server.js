@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 })
   .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.log('❌ MongoDB connection error:', err));
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Contact Schema
 const contactSchema = new mongoose.Schema({
@@ -33,6 +33,9 @@ const projectSchema = new mongoose.Schema({
   description: String,
   githubLink: String,
   liveLink: String,
+  screenshot: String, // URL or path (e.g., Cloudinary URL)
+  tech: [String], // Array of tech (e.g., ["React", "Node.js"])
+  outcome: String, // e.g., "Reduced load time by 40%"
 });
 const Project = mongoose.model('Project', projectSchema);
 
@@ -40,10 +43,22 @@ const Project = mongoose.model('Project', projectSchema);
 const skillSchema = new mongoose.Schema({
   name: String,
   icon: String, // e.g., 'FaReact' or icon URL
+  category: String, // e.g., 'Frontend'
+  level: String, // e.g., 'Intermediate'
+  usage: String, // e.g., 'Built 3 SPAs'
 });
 const Skill = mongoose.model('Skill', skillSchema);
 
-// Contact Form Endpoint
+// Middleware for Admin Authentication (simple API key)
+const adminAuth = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey !== process.env.ADMIN_API_KEY) { // Add ADMIN_API_KEY in .env
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+};
+
+// Contact Form Endpoint (public)
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
   try {
@@ -66,52 +81,78 @@ app.post('/api/contact', async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).send('✅ Message saved & Email sent');
+    res.status(200).json({ message: '✅ Message saved & Email sent' });
   } catch (error) {
     console.error('❌ Error:', error);
-    res.status(500).send('❌ Server error, please try again later');
+    res.status(500).json({ error: '❌ Server error, please try again later' });
   }
 });
 
-// Get all projects
+// Get all projects (public)
 app.get('/api/projects', async (req, res) => {
   try {
     const projects = await Project.find();
     res.json(projects);
   } catch (error) {
-    res.status(500).send('❌ Error fetching projects');
+    console.error('❌ Error fetching projects:', error);
+    res.status(500).json({ error: '❌ Error fetching projects' });
   }
 });
 
-// Add project
-app.post('/api/projects', async (req, res) => {
+// Add project (admin only)
+app.post('/api/projects', adminAuth, async (req, res) => {
   try {
     const newProject = new Project(req.body);
     await newProject.save();
-    res.status(200).send('✅ Project added');
+    res.status(200).json({ message: '✅ Project added' });
   } catch (error) {
-    res.status(500).send('❌ Error adding project');
+    console.error('❌ Error adding project:', error);
+    res.status(500).json({ error: '❌ Error adding project' });
   }
 });
 
-// Get all skills
+// Delete project (admin only)
+app.delete('/api/projects/:id', adminAuth, async (req, res) => {
+  try {
+    await Project.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: '✅ Project deleted' });
+  } catch (error) {
+    console.error('❌ Error deleting project:', error);
+    res.status(500).json({ error: '❌ Error deleting project' });
+  }
+});
+
+// Get all skills (public)
 app.get('/api/skills', async (req, res) => {
   try {
     const skills = await Skill.find();
     res.json(skills);
   } catch (error) {
-    res.status(500).send('❌ Error fetching skills');
+    console.error('❌ Error fetching skills:', error);
+    res.status(500).json({ error: '❌ Error fetching skills' });
   }
 });
 
-// Add skill
-app.post('/api/skills', async (req, res) => {
+// Add skill (admin only)
+app.post('/api/skills', adminAuth, async (req, res) => {
   try {
     const newSkill = new Skill(req.body);
     await newSkill.save();
-    res.status(200).send('✅ Skill added');
+    res.status(200).json({ message: '✅ Skill added' });
   } catch (error) {
-    res.status(500).send('❌ Error adding skill');
+    console.error('❌ Error adding skill:', error);
+    res.status(500).json({ error: '❌ Error adding skill' });
+  }
+});
+
+// Delete skill (admin only)
+app.delete('/api/skills/:id', adminAuth, async (req, res) => {
+  try {
+    await Skill.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: '✅ Skill deleted' });
+  } catch (error) {
+    console.error('❌ Error deleting skill:', error);
+    res.status(500).json({ error: '❌ Error deleting skill' });
   }
 });
 
