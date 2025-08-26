@@ -9,7 +9,7 @@ const Admin = () => {
   const handleProjectSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/projects', project); // Update to Render URL after deploy
+      await axios.post('https://portfolio-backend-82ts.onrender.com/api/projects', project);
       alert('Project added!');
       setProject({ title: '', description: '', githubLink: '', liveLink: '' }); // Reset form
     } catch (error) {
@@ -21,7 +21,7 @@ const Admin = () => {
   const handleSkillSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/skills', skill); // Update to Render URL
+      await axios.post('https://portfolio-backend-82ts.onrender.com/api/skills', skill);
       alert('Skill added!');
       setSkill({ name: '', icon: '' }); // Reset form
     } catch (error) {
@@ -70,7 +70,7 @@ const Admin = () => {
 
       {/* Add Skill Form */}
       <div>
-        <h3 className=" the mb-2">Add Skill</h3>
+        <h3 className="text-2xl mb-2">Add Skill</h3>
         <form onSubmit={handleSkillSubmit} className="space-y-4">
           <input
             type="text"

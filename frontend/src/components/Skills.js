@@ -6,7 +6,7 @@ const Skills = () => {
   const [skills, setSkills] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/skills') // Update to Render URL
+    axios.get('https://portfolio-backend-82ts.onrender.com/api/skills')
       .then(res => setSkills(res.data))
       .catch(err => console.error('Error fetching skills:', err));
   }, []);
